@@ -47,3 +47,21 @@ class Sale {
   Game game;
   int quantity;
 }
+
+class Store {
+ public:
+  void AddGame(const Game& game) { games.push_back(game); }
+  void MakeSale(const Sale &sale);
+
+  void DisplayGame() const;
+  void DisplayMenu() const;  // For User Interaction. 
+
+  const vector<Game> &get_game() const { return games; }
+
+  bool SaveDataToFile(const string &game_file) const;
+  bool LoadDataFromFile(const string &game_file);
+
+ private:
+  vector<Customer> customers;
+  vector<Game> games;
+}
