@@ -85,3 +85,13 @@ void Store::MakeSale(const Sale &sale) {
       cerr << "Error: Insufficient quantity of " << game.get_title() << " in stock." << endl;
   }
 }
+
+void DisplayMenu() const {
+  cout << "===== Sales Management System Menu =====" << endl;
+  cout << "1. Add Game" << endl;
+  cout << "2. Display Available Game" << endl;
+  cout << "3. Make Sale" << endl;
+  cout << "4. Save Data to File" << endl;
+  cout << "5. Exit" << endl;
+  cout << "Your Selection >> ";
+}
