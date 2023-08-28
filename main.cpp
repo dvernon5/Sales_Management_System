@@ -34,3 +34,16 @@ class Customer {
  private:
   double funds
 };
+
+class Sale {
+ public:
+  Sale(const Customer &customer, const Game &game, int quantity) : customer(customer), game(game), quantity(quantity) {}
+  const Customer &get_customer() const { return customer; }
+  const Game &get_game() const { return game; }
+  int get_quantity() const { return quantity; }
+
+ private:
+  Customer customer;
+  Game game;
+  int quantity;
+}
