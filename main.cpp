@@ -58,7 +58,7 @@ class Store {
   
   const vector<Game> &get_game() const { return games; }
 
-  bool SaveDataToFile(const string &game_file) const;
+  bool SaveDataToFile(const string &games_file) const;
   bool LoadDataFromFile(const string &game_file);
 
  private:
@@ -101,4 +101,19 @@ void DisplayGame() const {
   for (const auto &game : games) {
     cout << game.get_title() << " | Quantity: " << game.get_quantity() << " | Price: " << game.get_price() << endl;
   }
+}
+
+bool SaveDataToFile(const string &games_file) const {
+  ofstream game_out(games_file);
+  if (!game_out.is_open()) {
+    cerr << "Error: Unable to open games file for writing." << endl;
+    return false;
+  }
+ 
+  for (const auto &game : games) {
+    game_out << game.get_title() << "," << game.get_quantity() << "," << game.get_price() << endl;
+  }
+  game_out.close();
+ 
+  return true;
 }
