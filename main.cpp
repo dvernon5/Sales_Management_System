@@ -62,6 +62,5 @@ class Store {
   bool LoadDataFromFile(const string &game_file);
 
  private:
-  vector<Customer> customers;
   vector<Game> games;
 }
