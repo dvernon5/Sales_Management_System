@@ -24,3 +24,13 @@ class Game {
   int game_quantity;
   double game_price;
 };
+
+class Customer {
+ public:
+  Customer(double funds = 0.0) : funds(funds) {}
+  void set_funds(double new_funds) { funds = new_funds; }
+  double get_funds() const { return funds; }
+
+ private:
+  double funds
+};
