@@ -46,16 +46,16 @@ class Sale {
   Customer customer;
   Game game;
   int quantity;
-}
+};
 
 class Store {
  public:
   void AddGame(const Game& game) { games.push_back(game); }
   void MakeSale(const Sale &sale);
 
-  void DisplayGame() const;
   void DisplayMenu() const;  // For User Interaction. 
-
+  void DisplayGame() const;
+  
   const vector<Game> &get_game() const { return games; }
 
   bool SaveDataToFile(const string &game_file) const;
@@ -63,4 +63,25 @@ class Store {
 
  private:
   vector<Game> games;
+};
+
+void Store::MakeSale(const Sale &sale) {
+  Game game = const_cast<Game&>(sale.get_game());
+  Customer customer = const_cast<Customer&>(sale.get_customer());
+
+  if (game.get_quantity() >= sale.get_quantity()) {
+    const double california_tax = 0.1025;
+    double subtotal = game.get_price() * sale.get_quantity();
+    double taxes = subtotal * california_tax;
+    double total = subtotal + taxes;
+    if (customer.get_funds() >= total) {
+      game.set_quantity(game.get_quantity() - sale.get_quantity());
+      customer.set_funds(customer.get_funds() - total);
+      cout << "Sale Successful. Thank you for shopping with us. Have a wonderful day!" << endl;
+    } else {
+        cerr << "Error: Insufficient funds" << endl;
+    }
+  } else {
+      cerr << "Error: Insufficient quantity of " << game.get_title() << " in stock." << endl;
+  }
 }
