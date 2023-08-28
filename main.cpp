@@ -13,7 +13,7 @@ using std::ifstream;
 
 class Game {
  public:
-  Game(const string &title, int quantity, double game_price) : game_title(title), game_quantity(quantity), game_price(price) {}
+  Game(const string &title = "", int quantity = 0, double game_price = 0) : game_title(title), game_quantity(quantity), game_price(price) {}
   void set_game(int new_quantity) { game_quantity = new_quantity; }
   string get_title() const { return game_title; }
   int get_quantity() const { return game_quantity; }
@@ -59,7 +59,7 @@ class Store {
   const vector<Game> &get_game() const { return games; }
 
   bool SaveDataToFile(const string &games_file) const;
-  bool LoadDataFromFile(const string &game_file);
+  bool LoadDataFromFile(const string &games_file);
 
  private:
   vector<Game> games;
@@ -104,16 +104,35 @@ void DisplayGame() const {
 }
 
 bool SaveDataToFile(const string &games_file) const {
-  ofstream game_out(games_file);
-  if (!game_out.is_open()) {
+  ofstream game_outfile(games_file);
+  if (!game_outfile.is_open()) {
     cerr << "Error: Unable to open games file for writing." << endl;
     return false;
   }
  
   for (const auto &game : games) {
-    game_out << game.get_title() << "," << game.get_quantity() << "," << game.get_price() << endl;
+    game_outfile << game.get_title() << "," << game.get_quantity() << "," << game.get_price() << endl;
   }
-  game_out.close();
+  game_outfile.close();
  
+  return true;
+}
+
+bool LoadDataFromFile(const string &games_file) {
+  ifstream game_infile(games_file)
+  if (!game_infile.is_open()) {
+    cerr << "Error: Unable to open game file for reading." << endl
+    return false;
+  }
+  string game_title;
+  int quantity;
+  double price;
+
+  while (game_infile >> game_title >> quantity >> price) {
+    Game game(game_title, quantity, price);
+    games.push_back(game);
+  }
+  game_infile.close();
+
   return true;
 }
