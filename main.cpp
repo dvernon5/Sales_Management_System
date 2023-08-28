@@ -95,3 +95,10 @@ void DisplayMenu() const {
   cout << "5. Exit" << endl;
   cout << "Your Selection >> ";
 }
+
+void DisplayGame() const {
+  cout << "Available games:" << endl;
+  for (const auto &game : games) {
+    cout << game.get_title() << " | Quantity: " << game.get_quantity() << " | Price: " << game.get_price() << endl;
+  }
+}
