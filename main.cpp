@@ -25,31 +25,20 @@ class Game {
   double game_price;
 };
 
-class Customer {
- public:
-  Customer(double funds = 0.0) : funds(funds) {}
-  void set_funds(double new_funds) { funds = new_funds; }
-  double get_funds() const { return funds; }
-
- private:
-  double funds
-};
-
 class Sale {
  public:
-  Sale(const Customer &customer, const Game &game, int quantity) : customer(customer), game(game), quantity(quantity) {}
-  const Customer &get_customer() const { return customer; }
+  Sale(const Game &game, int quantity) : game(game), quantity(quantity) {}
   const Game &get_game() const { return game; }
   int get_quantity() const { return quantity; }
 
  private:
-  Customer customer;
   Game game;
   int quantity;
 };
 
 class Store {
  public:
+  void set_customer_funds(double funds = 0.0) : customer_funds(funds) {}
   void AddGame(const Game& game) { games.push_back(game); }
   void MakeSale(const Sale &sale);
 
@@ -63,20 +52,20 @@ class Store {
 
  private:
   vector<Game> games;
+  double customer_funds;
 };
 
 void Store::MakeSale(const Sale &sale) {
   Game game = const_cast<Game&>(sale.get_game());
-  Customer customer = const_cast<Customer&>(sale.get_customer());
 
   if (game.get_quantity() >= sale.get_quantity()) {
     const double california_tax = 0.1025;
     double subtotal = game.get_price() * sale.get_quantity();
     double taxes = subtotal * california_tax;
     double total = subtotal + taxes;
-    if (customer.get_funds() >= total) {
+    if (customer_funds >= total) {
       game.set_quantity(game.get_quantity() - sale.get_quantity());
-      customer.set_funds(customer.get_funds() - total);
+      customer_funds -= total;
       cout << "Sale Successful. Thank you for shopping with us. Have a wonderful day!" << endl;
     } else {
         cerr << "Error: Insufficient funds" << endl;
@@ -135,4 +124,93 @@ bool LoadDataFromFile(const string &games_file) {
   game_infile.close();
 
   return true;
+}
+
+int main(int argv, char *argc[]) {
+  Store store;
+  if (!store.LoadDataFromFile("games.txt")) {
+    cerr << "Error: Unable to load from files. Starting with empty records." << endl;
+  } else {
+    cout << "Data loaded from files." << endl;
+  }
+
+  // Set the initial customer funds
+  double initial_funds;
+  cout << "Enter Customer Funds: $";
+  cin >> initial_funds;
+  cin.ignore();
+  store.set_customer_funds(initial_funds);
+ 
+  int selection;
+  while (true) {
+    store.DisplayMenu();
+    cin >> selection;
+    cin.ignore();
+
+    switch (selection) {
+      case 1: {
+        string game_title;
+        cout << "Enter Game Title: ";
+        getline(cin, game_title);
+       
+        int quantity;
+        cout << "Enter Game Quantity: ";
+        cin >> quantity;
+        cin.ignore();
+       
+        double price;
+        cout << "Enter Game Price: ";
+        cin >> price;
+        cin.ignore();
+
+        store.AddGame(Game(game_title, quantity, price));
+        break;
+      }
+     case 2: {
+       store.DisplayGame();
+       break;
+     }
+     case 3: {
+       string game_title;
+       cout << "Enter Game Title: ";
+       getline(cin, game_title);
+
+       cout << "Enter Quantity to Purchase: ";
+       int quantity;
+
+       bool game_found = false;
+       Game found_game("", 0, 0.0);
+       for (const auto &game : store.getGames()) {
+         if (game.getTitle() == game_title) {
+           game_found = true;
+           found_game = game;
+           break;
+         }
+       }
+       if (!game_found) {
+         cout << "Game with title " << game_title << " not found." << endl;
+         break;
+       }
+       store.MakeSale(Sale(found_game, quantity));
+       break;
+     }
+     case 4: {
+       if (store.saveDataToFile("games.txt")) {
+         cout << "Data saved to files." << endl;
+       } else {
+         cerr << "Error occurred while saving data to files." << endl;
+       }
+       break;
+     }
+     case 5: {
+       cout << "Exiting the Sales Management System. Goodbye!" << endl;
+       return 0;
+     }
+     default: {
+       cout << "Invalid choice. Please try again." << endl;
+       break;
+     }
+    }
+  }
+ return 0;
 }
